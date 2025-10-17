@@ -72,7 +72,6 @@ public sealed class EtlService
         {
             return await _repository.BulkInsertAsync(trips, batchSize, cancellationToken);
         }
-        //TODO rewrite
         catch (SqlException ex) when (ex.Number == 2627 || ex.Number == 2601) // Unique key violation
         {
 	        _logger.LogWarning(ex, "A batch of records was skipped due to unique key violation. Batch contains duplicate entries.");
