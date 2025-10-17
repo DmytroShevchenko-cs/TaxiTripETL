@@ -16,4 +16,9 @@ public interface IAnalysisRepository
     /// Finds the top 100 longest trips by duration and prints the results to the console.
     /// </summary>
     Task FindTop100LongestFaresByTimeAsync();
+
+    /// <summary>
+    /// Searches trips filtered by pickup location id (PULocationID) and prints basic info.
+    /// </summary>
+    Task SearchByPULocationIdAsync(int puLocationId, int take = 100);
 }

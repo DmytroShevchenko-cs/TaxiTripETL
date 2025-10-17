@@ -40,7 +40,8 @@ public class InteractiveService
             Console.WriteLine($"1. Select CSV file (Current: {_selectedCsvPath ?? "None"})");
             Console.WriteLine("2. Run ETL Process");
             Console.WriteLine("3. Run Analysis Queries");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Search by PULocationID");
+            Console.WriteLine("5. Exit");
             Console.Write("> ");
 
         var input = Console.ReadLine();
@@ -56,6 +57,9 @@ public class InteractiveService
                     await RunAnalysisQueriesAsync();
                     break;
                 case "4":
+                    await RunSearchByPULocationIdAsync();
+                    break;
+                case "5":
                     return;
                 default:
                 _logger.LogWarning("Invalid option, please try again. Input: {Input}", input);
@@ -139,6 +143,37 @@ public class InteractiveService
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred during analysis.");
+        }
+    }
+
+    private async Task RunSearchByPULocationIdAsync()
+    {
+        Console.WriteLine("\nEnter PULocationID:");
+        Console.Write("> ");
+        var puInput = Console.ReadLine();
+        if (!int.TryParse(puInput, out var puLocationId))
+        {
+            _logger.LogWarning("Invalid PULocationID: {Input}", puInput);
+            return;
+        }
+
+        Console.WriteLine("Enter how many rows to take (default 100):");
+        Console.Write("> ");
+        var takeInput = Console.ReadLine();
+        int take = 100;
+        if (!string.IsNullOrWhiteSpace(takeInput) && !int.TryParse(takeInput, out take))
+        {
+            _logger.LogWarning("Invalid number, defaulting to 100. Input: {Input}", takeInput);
+            take = 100;
+        }
+
+        try
+        {
+            await _analysisRepository.SearchByPULocationIdAsync(puLocationId, take);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred during search.");
         }
     }
 }
